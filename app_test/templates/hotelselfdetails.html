@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <title>My details</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+<section class="view-hotel mt-5" id="view-hotel">
+    <div class="container mt-5">
+        <div class="row">
+            {% if datas %}
+            <div class="mx-auto d-block col-lg-12" id="hotel_div" style="max-width: 25rem;">
+                <div class="card mt-4">
+                    {% if datas.Image == "/static/images/icon-hotel.png" %}
+                    <img class="card-img-top" src="/static/images/icon-hotel.png" alt="Card image cap">
+                    {% else %}
+                    <img class="card-img-top" src="{{ datas.Image.url }}" alt="Card image cap">
+                    {%endif%}
+                    <div class="card-body">
+                        <h5 class="card-title">Name : {{ datas.Hotel_name }}</h5>
+                        <p class="card-text">Email : {{ datas.Email }}.</p>
+                        <p class="card-text">Mobile : {{ datas.Phone_number }}</p>
+                        <p class="card-text">Address : {{ datas.Address }}</p>
+                        <div class="d-flex">
+                            <a href="{% url 'updatehotel' datas.id %}" class="btn btn-primary form-control">Update</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <p>No hotels registered</p>
+            {%endif%}
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

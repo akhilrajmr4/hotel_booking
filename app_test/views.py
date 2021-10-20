@@ -1,11 +1,28 @@
 import json
-
+from django.core.mail import send_mail
+from django.conf import settings
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import random
-
-# this page admin logined
 from app_test.models import *
+
+
+# hotel login
+
+def login(request):
+    if request.method == "POST":
+        email = request.POST.get('username', None)
+        password = request.POST.get('password', None)
+
+        email_ext = hotel_details.objects.filter(Email=email, Password=password)
+        if email_ext:
+            get_id = hotel_details.objects.get(Email=email, Password=password)
+            request.session['id'] = get_id.id
+            return render(request, 'hotelhome.html')
+        else:
+            msg = "Email not exits"
+            return render(request, 'login.html', {'msg': msg})
+    return render(request, 'login.html')
 
 
 def adminHome(request):
@@ -29,9 +46,18 @@ def addHotel(request):
             exit = "Hotel already exist"
             return render(request, 'addhotel.html', {'exit': exit})
         else:
+
             password = random.SystemRandom().randint(100000, 999999)
-            hotel_details.objects.create(Hotel_name=hotel_name, Email=email, Phone_number=phone, Password=password,
-                                         Address=address, Image=image_name)
+
+            subject = 'Your site registered by akhilmr'
+            message = 'Your login details are below\n\nEmail id : ' + str(email) + '\n\nPassword : ' + str(password) + \
+                      '\n\nYou can login this details'
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = [email, ]
+            send_mail(subject, message, email_from, recipient_list)
+
+            hotel_details.objects.create(Hotel_name=hotel_name, Email=email, Phone_number=phone,
+                                         Password=password, Address=address, Image=image_name)
 
             msg = "Hotel added successfully"
             return render(request, 'addhotel.html', {'msg': msg})
@@ -84,3 +110,37 @@ def updatehotel(request, pk):
     else:
         hotel_data = hotel_details.objects.get(id=pk)
         return render(request, 'updatehotel.html', {'hotel_data': hotel_data})
+
+
+# hotel home
+
+def hotelhome(request):
+    if 'id' in request.session:
+        return render(request, 'hotelhome.html')
+    else:
+        return redirect('/')
+
+
+# hotel delete session
+def hotel_delete_session(request):
+    del request.session['id']
+    request.session.set_expiry(0.0000001)
+    return redirect('/')
+
+
+# update hotel details
+def update_hotel(request):
+    if 'id' in request.session:
+        return render(request, 'updatehoteldetails.html')
+    else:
+        return redirect('/')
+
+
+# hotel self details
+def hotel_self_details(request):
+    if 'id' in request.session:
+        hotel_id = request.session['id']
+        hotal_datas = hotel_details.objects.get(id=hotel_id)
+        return render(request, 'hotelselfdetails.html', {'datas': hotal_datas})
+    else:
+        return redirect('/')
