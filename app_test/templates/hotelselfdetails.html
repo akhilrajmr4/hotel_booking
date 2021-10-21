@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <title>My details</title>
-    <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </head>
@@ -14,7 +14,7 @@
     <div class="container mt-5">
         <div class="row">
             {% if datas %}
-            <div class="mx-auto d-block col-lg-12" id="hotel_div" style="max-width: 25rem;">
+            <div class="mx-auto d-block col-lg-12" id="hotel_div" style="max-width: 30rem;">
                 <div class="card mt-4">
                     {% if datas.Image == "/static/images/icon-hotel.png" %}
                     <img class="card-img-top" src="/static/images/icon-hotel.png" alt="Card image cap">
@@ -26,8 +26,11 @@
                         <p class="card-text">Email : {{ datas.Email }}.</p>
                         <p class="card-text">Mobile : {{ datas.Phone_number }}</p>
                         <p class="card-text">Address : {{ datas.Address }}</p>
+                        {% if datas.Description %}
+                        <p class="card-text">Descrption <br>{{ datas.Description }}</p>
+                        {%endif%}
                         <div class="d-flex">
-                            <a href="{% url 'updatehotel' datas.id %}" class="btn btn-primary form-control">Update</a>
+                            <a href="{% url 'update_hotel' datas.id %}" class="btn btn-primary form-control">Update</a>
                         </div>
                     </div>
                 </div>

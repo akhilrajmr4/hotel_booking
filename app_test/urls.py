@@ -16,7 +16,7 @@ urlpatterns = [
                   # delete hotel session (akhil raj m r)
                   path('hotel_self_details/', views.hotel_self_details, name="hotel_self_details"),
                   # delete hotel session (akhil raj m r)
-                  path('update_hotel/', views.update_hotel, name="update_hotel"),
+                  path('update_hotel/<int:pk>/', views.update_hotel, name="update_hotel"),
                   # update hotel (akhil raj m r)
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

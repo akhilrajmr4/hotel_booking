@@ -1,4 +1,6 @@
 import json
+import os
+
 from django.core.mail import send_mail
 from django.conf import settings
 from django.http import HttpResponse
@@ -92,10 +94,16 @@ def updatehotel(request, pk):
         hotel_name = request.POST.get('hotel_name', None)
         email = request.POST.get('email', None)
 
-        hotel_ext = hotel_details.objects.filter(Hotel_name=hotel_name).exists()
-        hotel_ext1 = hotel_details.objects.filter(Email=email).exists()
+        if hotel_data.Hotel_name == hotel_name and hotel_data.Email == email:
+            hotel_data.Hotel_name = hotel_name
+            hotel_data.Email = email
+            hotel_data.Phone_number = request.POST.get('phone', None)
+            hotel_data.Address = request.POST.get('address', None)
+            hotel_data.save()
+            msg = "Hotel update successfully"
+            return render(request, 'updatehotel.html', {'msg': msg})
 
-        if hotel_ext or hotel_ext1:
+        elif hotel_details.objects.filter(Hotel_name=hotel_name) and hotel_details.objects.filter(Email=email):
             exits = "Already exist"
             return render(request, 'updatehotel.html', {'exits': exits})
         else:
@@ -129,9 +137,39 @@ def hotel_delete_session(request):
 
 
 # update hotel details
-def update_hotel(request):
+def update_hotel(request, pk):
     if 'id' in request.session:
-        return render(request, 'updatehoteldetails.html')
+        if request.method == "POST":
+            self_hotel = hotel_details.objects.get(id=pk)
+            if request.FILES.get('file') is not None:
+                if self_hotel.Image != "/static/images/icon-hotel.png":
+                    os.remove(self_hotel.Image.path)
+                self_hotel.Image = request.FILES['file']
+
+            Hotel_name = request.POST.get('hotel_name', None)
+            self_hotel.Email = request.POST.get('email', None)
+            self_hotel.Phone_number = request.POST.get('phone', None)
+            self_hotel.Address = request.POST.get('address', None)
+            self_hotel.Description = request.POST.get('description', None)
+
+            if self_hotel.Hotel_name == Hotel_name:
+                self_hotel.Hotel_name = Hotel_name
+                self_hotel.save()
+                msg = "Data updated successfully"
+                return render(request, 'updatehoteldetails.html', {'msg': msg})
+
+            elif hotel_details.objects.filter(Hotel_name=Hotel_name):
+                ext = "Data already exit"
+                return render(request, 'updatehoteldetails.html', {'ext': ext})
+
+            else:
+                self_hotel.Hotel_name = Hotel_name
+                self_hotel.save()
+                msg = "Data updated successfully"
+                return render(request, 'updatehoteldetails.html', {'msg': msg})
+        else:
+            self_hotel = hotel_details.objects.get(id=pk)
+            return render(request, 'updatehoteldetails.html', {'self_hotel': self_hotel})
     else:
         return redirect('/')
 

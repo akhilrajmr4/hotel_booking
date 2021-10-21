@@ -6,9 +6,10 @@ from django.db import models
 
 class hotel_details(models.Model):
     Hotel_name = models.CharField(max_length=254)
-    Email = models.EmailField(max_length=254)
+    Email = models.EmailField(unique=True)
     Phone_number = models.CharField(max_length=12)
     Address = models.CharField(max_length=254)
     Password = models.CharField(max_length=255)
     Image = models.ImageField(upload_to="images/")
+    Description = models.TextField()
 
