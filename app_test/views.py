@@ -3,9 +3,12 @@ import os
 
 from django.core.mail import send_mail
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 import random
+
+from django.urls import reverse
+
 from app_test.models import *
 
 
@@ -51,12 +54,12 @@ def addHotel(request):
 
             password = random.SystemRandom().randint(100000, 999999)
 
-            subject = 'Your site registered by akhilmr'
-            message = 'Your login details are below\n\nEmail id : ' + str(email) + '\n\nPassword : ' + str(password) + \
-                      '\n\nYou can login this details'
-            email_from = settings.EMAIL_HOST_USER
-            recipient_list = [email, ]
-            send_mail(subject, message, email_from, recipient_list)
+            # subject = 'Your site registered by akhilmr'
+            # message = 'Your login details are below\n\nEmail id : ' + str(email) + '\n\nPassword : ' + str(password) + \
+            #           '\n\nYou can login this details'
+            # email_from = settings.EMAIL_HOST_USER
+            # recipient_list = [email, ]
+            # send_mail(subject, message, email_from, recipient_list)
 
             hotel_details.objects.create(Hotel_name=hotel_name, Email=email, Phone_number=phone,
                                          Password=password, Address=address, Image=image_name)
@@ -100,8 +103,8 @@ def updatehotel(request, pk):
             hotel_data.Phone_number = request.POST.get('phone', None)
             hotel_data.Address = request.POST.get('address', None)
             hotel_data.save()
-            msg = "Hotel update successfully"
-            return render(request, 'updatehotel.html', {'msg': msg})
+            nex = request.GET.get('nex', reverse('viewHotel'))
+            return HttpResponseRedirect(nex)
 
         elif hotel_details.objects.filter(Hotel_name=hotel_name) and hotel_details.objects.filter(Email=email):
             exits = "Already exist"
@@ -112,8 +115,8 @@ def updatehotel(request, pk):
             hotel_data.Phone_number = request.POST.get('phone', None)
             hotel_data.Address = request.POST.get('address', None)
             hotel_data.save()
-            msg = "Hotel update successfully"
-            return render(request, 'updatehotel.html', {'msg': msg})
+            nex = request.GET.get('nex', reverse('viewHotel'))
+            return HttpResponseRedirect(nex)
 
     else:
         hotel_data = hotel_details.objects.get(id=pk)
@@ -155,8 +158,8 @@ def update_hotel(request, pk):
             if self_hotel.Hotel_name == Hotel_name:
                 self_hotel.Hotel_name = Hotel_name
                 self_hotel.save()
-                msg = "Data updated successfully"
-                return render(request, 'updatehoteldetails.html', {'msg': msg})
+                nex = request.GET.get('nex', reverse('hotel_self_details'))
+                return HttpResponseRedirect(nex)
 
             elif hotel_details.objects.filter(Hotel_name=Hotel_name):
                 ext = "Data already exit"
@@ -165,8 +168,8 @@ def update_hotel(request, pk):
             else:
                 self_hotel.Hotel_name = Hotel_name
                 self_hotel.save()
-                msg = "Data updated successfully"
-                return render(request, 'updatehoteldetails.html', {'msg': msg})
+                nex = request.GET.get('nex', reverse('hotel_self_details'))
+                return HttpResponseRedirect(nex)
         else:
             self_hotel = hotel_details.objects.get(id=pk)
             return render(request, 'updatehoteldetails.html', {'self_hotel': self_hotel})
