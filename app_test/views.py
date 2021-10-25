@@ -115,8 +115,7 @@ def updatehotel(request, pk):
             hotel_data.Phone_number = request.POST.get('phone', None)
             hotel_data.Address = request.POST.get('address', None)
             hotel_data.save()
-            nex = request.GET.get('nex', reverse('viewHotel'))
-            return HttpResponseRedirect(nex)
+            return redirect('viewHotel')
 
     else:
         hotel_data = hotel_details.objects.get(id=pk)
@@ -158,8 +157,7 @@ def update_hotel(request, pk):
             if self_hotel.Hotel_name == Hotel_name:
                 self_hotel.Hotel_name = Hotel_name
                 self_hotel.save()
-                nex = request.GET.get('nex', reverse('hotel_self_details'))
-                return HttpResponseRedirect(nex)
+                return redirect('hotel_self_details')
 
             elif hotel_details.objects.filter(Hotel_name=Hotel_name):
                 ext = "Data already exit"
@@ -168,8 +166,7 @@ def update_hotel(request, pk):
             else:
                 self_hotel.Hotel_name = Hotel_name
                 self_hotel.save()
-                nex = request.GET.get('nex', reverse('hotel_self_details'))
-                return HttpResponseRedirect(nex)
+                return redirect('hotel_self_details')
         else:
             self_hotel = hotel_details.objects.get(id=pk)
             return render(request, 'updatehoteldetails.html', {'self_hotel': self_hotel})
