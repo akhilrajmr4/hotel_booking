@@ -12,6 +12,13 @@ from django.urls import reverse
 from app_test.models import *
 
 
+# index page
+
+
+def indexpage(request):
+    return render(request, 'index.html')
+
+
 # hotel login
 
 def login(request):
@@ -23,7 +30,7 @@ def login(request):
         if email_ext:
             get_id = hotel_details.objects.get(Email=email, Password=password)
             request.session['id'] = get_id.id
-            return render(request, 'hotelhome.html')
+            return redirect('hotelhome')
         else:
             msg = "Email not exits"
             return render(request, 'login.html', {'msg': msg})
@@ -133,9 +140,11 @@ def hotelhome(request):
 
 # hotel delete session
 def hotel_delete_session(request):
-    del request.session['id']
-    request.session.set_expiry(0.0000001)
-    return redirect('/')
+    # for key in request.session.keys():
+    #     del request.session[key]
+    request.session.flush()
+    # request.session.set_expiry(0.0000001)
+    return redirect('login')
 
 
 # update hotel details

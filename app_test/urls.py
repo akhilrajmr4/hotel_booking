@@ -4,7 +4,8 @@ from django.conf.urls.static import static
 from . import views
 
 urlpatterns = [
-                  path('', views.login, name='login'),  # login page (Akhil raj m r)
+                  path('', views.indexpage, name='indexpage'),  # index page (Akhil raj m r)
+                  path('login/', views.login, name='login'),  # login page (Akhil raj m r)
                   path('adminHome/', views.adminHome, name="adminHome"),  # adminHome page (Akhilraj m r)
                   path('addhotel/', views.addHotel, name="addHotel"),  # addhotel page (Akhilraj m r)
                   path('viewHotel/', views.viewHotel, name="viewHotel"),  # view hotel page (Akhilraj m r)
@@ -14,6 +15,7 @@ urlpatterns = [
                   # update hotel (akhil raj mr)
                   path('hotel_delete_session/', views.hotel_delete_session, name="hotel_delete_session"),
                   # delete hotel session (akhil raj m r)
+                  path('hotelhome/', views.hotelhome, name="hotelhome"),  # hotelHome (Akhil Raj M R)
                   path('hotel_self_details/', views.hotel_self_details, name="hotel_self_details"),
                   # delete hotel session (akhil raj m r)
                   path('update_hotel/<int:pk>/', views.update_hotel, name="update_hotel"),

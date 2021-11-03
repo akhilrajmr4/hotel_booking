@@ -4,29 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <title>Hotel Home</title>
+    <title>index</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    <style>
-        .container {
-            margin-top: 100px;
-        }
-
-    </style>
 </head>
 <body>
-<section class="header">
-    <div class="container">
-        <h1>Hotel home</h1>
-        <div class="d-flex">
-            <a href="{% url 'hotel_self_details' %}" class="btn btn-success">View My details</a>
-            <a href="" class="btn btn-info ml-3">Add Rooms</a>
-            <a href="{% url 'hotel_delete_session' %}" class="btn btn-danger ml-3">Logout</a>
-        </div>
-    </div>
-
-</section>
+<div class="container mt-5">
+    <a href="{% url 'login' %}" class="btn btn-success">Login</a>
+</div>
 
 </body>
 </html>
