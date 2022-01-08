@@ -13,41 +13,45 @@
 </head>
 
 <body>
-<section class="view-hotel mt-5" id="view-hotel">
-    <div class="container mt-5">
-        <input class="form-control" id="myInput" type="text" placeholder="Search..">
-        <br>
-        <div class="row" id="myRow">
-            {% if hotel_det %}
-            {% for datas in hotel_det %}
-            <div class="col-lg-3 col-md-4 col-sm-6 col-12" id="hotel_div">
-                <div class="card mt-4">
-                    {% if datas.Image == "/static/images/icon-hotel.png" %}
-                    <img class="card-img-top" src="/static/images/icon-hotel.png" alt="Card image cap">
-                    {% else %}
-                    <img class="card-img-top" src="{{ datas.Image.url }}" alt="Card image cap">
-                    {%endif%}
-                    <div class="card-body">
-                        <h5 class="card-title">{{ datas.Hotel_name }}</h5>
-                        <p class="card-text">{{ datas.Email }}.</p>
-                        <p class="card-text">{{ datas.Phone_number }}</p>
-                        <div class="d-flex">
-                            <a href="{% url 'updatehotel' datas.id %}" class="btn btn-primary form-control">Update</a>&nbsp;&nbsp;&nbsp;
-                            <button type="button" class="delete btn-danger form-control"
+    <section class="view-hotel mt-5" id="view-hotel">
+        <div class="container mt-5">
+            <input class="form-control" id="myInput" type="text" placeholder="Search..">
+            <br>
+            <div class="row" id="myRow">
+                {% if hotel_det %}
+                {% for datas in hotel_det %}
+                <div class="col-lg-3 col-md-4 col-sm-6 col-12" id="hotel_div">
+                    <div class="card mt-4">
+                        {% if datas.Image == "/static/images/icon-hotel.png" %}
+                        <img class="card-img-top" src="/static/images/icon-hotel.png" alt="Card image cap">
+                        {% else %}
+                        <img class="card-img-top" src="{{ datas.Image.url }}" alt="Card image cap">
+                        {%endif%}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ datas.Hotel_name }}</h5>
+                            <p class="card-text">{{ datas.Email }}.</p>
+                            <p class="card-text">{{ datas.Phone_number }}</p>
+                            <div class="d-flex">
+                                <a href="{% url 'updatehotel' datas.id %}"
+                                    class="btn btn-primary form-control">Update</a>&nbsp;&nbsp;&nbsp;
+                                <button type="button" class="delete btn-danger form-control"
                                     data-id="{{ datas.id }}">Delete
-                            </button>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
+                {%endfor%}
+                {% else %}
+                <p>No hotels registered</p>
+                {%endif%}
             </div>
-            {%endfor%}
-            {% else %}
-            <p>No hotels registered</p>
-            {%endif%}
         </div>
-    </div>
-</section>
-<script>
+    </section>
+    <script>
+        if (performance.navigation.type === 2) {
+            location.reload();
+        }
         $(function () {
             $("#myInput").on("keyup", function () {
                 var value = $(this).val().toLowerCase();
@@ -80,7 +84,7 @@
             });
         });
 
-</script>
+    </script>
 </body>
 
 </html>

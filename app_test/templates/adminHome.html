@@ -21,12 +21,84 @@
         <div class="container">
             <div class="d-flex">
                 <a href="{% url 'addHotel' %}" class="btn btn-success">Add Hotels</a>
-                <a href="{% url 'viewHotel' %}" class="btn btn-info ml-3">View Hotels</a>
+                <a href="#" class="btn btn-info ml-3">View Hotels</a>
                 <a href="{% url 'admin_logout' %}" class="btn btn-danger ml-3">Logout</a>
             </div>
         </div>
-       
+
     </section>
+    <section class="view-hotel mt-5" id="view-hotel">
+        <div class="container mt-5">
+            <input class="form-control" id="myInput" type="text" placeholder="Search..">
+            <br>
+            <div class="row" id="myRow">
+                {% if hotel_det %}
+                {% for datas in hotel_det %}
+                <div class="col-lg-3 col-md-4 col-sm-6 col-12" id="hotel_div">
+                    <div class="card mt-4">
+                        {% if datas.Image == "/static/images/icon-hotel.png" %}
+                        <img class="card-img-top" src="/static/images/icon-hotel.png" alt="Card image cap">
+                        {% else %}
+                        <img class="card-img-top" src="{{ datas.Image.url }}" alt="Card image cap">
+                        {%endif%}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ datas.Hotel_name }}</h5>
+                            <p class="card-text">{{ datas.Email }}</p>
+                            <p class="card-text">{{ datas.Phone_number }}</p>
+                            <div class="d-flex">
+                                <a href="{% url 'updatehotel' datas.id %}"
+                                    class="btn btn-primary form-control">Update</a>&nbsp;&nbsp;&nbsp;
+                                <button type="button" class="delete btn-danger form-control"
+                                    data-id="{{ datas.id }}">Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {%endfor%}
+                {% else %}
+                <p>No hotels registered</p>
+                {%endif%}
+            </div>
+        </div>
+    </section>
+    <script>
+        if (performance.navigation.type === 2) {
+            location.reload();
+        }
+        $(function () {
+            $("#myInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#myRow div").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+            $(document).on('click', '.delete', function (e) {
+                e.preventDefault();
+                var el = this;
+                var deleteid = $(this).data('id');
+                var confirmalert = confirm("Are you sure to delete?");
+                if (confirmalert == true) {
+                    // AJAX Request
+                    $.ajax({
+                        type: "get",
+                        url: "{% url 'delete_hotel' %}",
+                        data: {
+                            id: deleteid
+                        },
+                        dataType: 'json',
+                        success: function (response) {
+                            alert(response.msg)
+                            $(el).closest("#hotel_div").remove();
+                        }
+                    });
+                } else {
+                    return false;
+                }
+            });
+        });
+
+    </script>
 
 </body>
 

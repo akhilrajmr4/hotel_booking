@@ -9,8 +9,9 @@ from django.shortcuts import render, redirect
 import random
 
 from django.urls import reverse
-
+from django.db.models import Q
 from app_test.models import *
+from django.contrib.auth.hashers import check_password, make_password
 
 # index page
 
@@ -26,20 +27,29 @@ def login_page(request):
         username = request.POST.get('username', None)
         password = request.POST.get('password', None)
 
-        email_ext = hotel_details.objects.filter(Email=username, Password=password)
+        
+           
         user = authenticate(username=username, password=password)
+
 
         if user:
             login(request, user)
             return redirect('adminHome')
+       
         else:
+            email_ext = hotel_details.objects.get(Email=username)
             if email_ext:
-                get_id = hotel_details.objects.get(Email=username, Password=password)
-                request.session['id'] = get_id.id
-                return redirect('hotelhome')
+                pwd_valid = check_password(password, email_ext.Password)
+                if pwd_valid:
+                    request.session['id'] = email_ext.id
+                    return redirect('hotelhome')
+                else:
+                    msg = "Password is incorrect"
+                    return render(request, 'login.html', {'msg': msg})
             else:
-                msg = "Email not exits"
+                msg = "Not a user"
                 return render(request, 'login.html', {'msg': msg})
+
     else:
         return render(request, 'login.html')
 
@@ -51,7 +61,8 @@ def admin_logout(request):
 def adminHome(request):
 
     if request.user.is_authenticated:
-        return render(request, 'adminHome.html')
+        hotel_det = hotel_details.objects.all().order_by('?')
+        return render(request, 'adminHome.html', {'hotel_det': hotel_det})
     else:
         return redirect('login_page')
 
@@ -76,7 +87,9 @@ def addHotel(request):
                 return render(request, 'addhotel.html', {'exit': exit})
             else:
 
-                password = random.SystemRandom().randint(100000, 999999)
+                pass1 = random.SystemRandom().randint(100000, 999999)
+                print(pass1)
+                password = make_password(str(pass1))
 
                 # subject = 'Your site registered by akhilmr'
                 # message = 'Your login details are below\n\nEmail id : ' + str(email) + '\n\nPassword : ' + str(password) + \
@@ -87,6 +100,7 @@ def addHotel(request):
 
                 hotel_details.objects.create(Hotel_name=hotel_name, Email=email, Phone_number=phone,
                                             Password=password, Address=address, Image=image_name)
+                                            
 
                 msg = "Hotel added successfully"
                 return render(request, 'addhotel.html', {'msg': msg})
@@ -96,14 +110,6 @@ def addHotel(request):
         return redirect('login_page')
 
 
-# view hotel
-
-def viewHotel(request):
-    if request.user.is_authenticated:
-        hotel_det = hotel_details.objects.all().order_by('?')
-        return render(request, 'viewhotel.html', {'hotel_det': hotel_det})
-    else:
-        return redirect('login_page')
 
 
 # delete hotel
@@ -133,24 +139,27 @@ def updatehotel(request, pk):
             hotel_name = request.POST.get('hotel_name', None)
             email = request.POST.get('email', None)
 
-            if hotel_data.Hotel_name == hotel_name and hotel_data.Email == email:
+            if hotel_data.Hotel_name == hotel_name:
                 hotel_data.Hotel_name = hotel_name
                 hotel_data.Email = email
                 hotel_data.Phone_number = request.POST.get('phone', None)
                 hotel_data.Address = request.POST.get('address', None)
                 hotel_data.save()
-                return redirect('viewHotel')
+                msg = "Data update successfully"
+                return render(request, 'updatehotel.html', {'msg': msg})
 
-            elif hotel_details.objects.filter(Hotel_name=hotel_name) and hotel_details.objects.filter(Email=email):
-                exits = "Already exist"
-                return render(request, 'updatehotel.html', {'exits': exits})
             else:
-                hotel_data.Hotel_name = hotel_name
-                hotel_data.Email = email
-                hotel_data.Phone_number = request.POST.get('phone', None)
-                hotel_data.Address = request.POST.get('address', None)
-                hotel_data.save()
-                return redirect('viewHotel')
+                if hotel_details.objects.filter(Q(Hotel_name=hotel_name) & ~Q(id=pk)):
+                    exits = "Already exist"
+                    return render(request, 'updatehotel.html', {'exits': exits})
+                else:
+                    hotel_data.Hotel_name = hotel_name
+                    hotel_data.Email = email
+                    hotel_data.Phone_number = request.POST.get('phone', None)
+                    hotel_data.Address = request.POST.get('address', None)
+                    hotel_data.save()
+                    msg = "Data update successfully"
+                    return render(request, 'updatehotel.html', {'msg': msg})
 
         else:
             hotel_data = hotel_details.objects.get(id=pk)
@@ -177,9 +186,9 @@ def hotel_delete_session(request):
         #     del request.session[key]
         request.session.flush()
         # request.session.set_expiry(0.0000001)
-        return redirect('login_page')
+        return redirect('/')
     else:
-        return redirect('login_page')
+        return redirect('/')
 
 
 # update hotel details
@@ -201,16 +210,20 @@ def update_hotel(request, pk):
             if self_hotel.Hotel_name == Hotel_name:
                 self_hotel.Hotel_name = Hotel_name
                 self_hotel.save()
-                return redirect('hotel_self_details')
-
-            elif hotel_details.objects.filter(Hotel_name=Hotel_name):
-                ext = "Data already exit"
-                return render(request, 'updatehoteldetails.html', {'ext': ext})
-
+                msg = "Data updated successfully"
+                return render(request, 'updatehoteldetails.html', {'msg': msg})
+            
             else:
-                self_hotel.Hotel_name = Hotel_name
-                self_hotel.save()
-                return redirect('hotel_self_details')
+
+                if hotel_details.objects.filter(Q(Hotel_name=Hotel_name) & ~Q(id=pk)):
+                    ext = "Data already exit"
+                    return render(request, 'updatehoteldetails.html', {'ext': ext})
+
+                else:
+                    self_hotel.Hotel_name = Hotel_name
+                    self_hotel.save()
+                    msg = "Data updated successfully"
+                    return render(request, 'updatehoteldetails.html', {'msg': msg})
         else:
             self_hotel = hotel_details.objects.get(id=pk)
             return render(request, 'updatehoteldetails.html', {'self_hotel': self_hotel})
