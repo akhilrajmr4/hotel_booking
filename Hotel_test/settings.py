@@ -129,9 +129,9 @@ TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'template'),  # if your static files folder is named "template"
 )
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'creatiftestproject@gmail.com'
-EMAIL_HOST_PASSWORD = 'creatif12345'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_USE_TLS = True
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'creatiftestproject@gmail.com'
+# EMAIL_HOST_PASSWORD = ''
